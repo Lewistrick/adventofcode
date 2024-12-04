@@ -1,9 +1,9 @@
 
-from aoc_tools import Grid, grid_blocks, grid_lines
+from aoc_tools import Grid, grid_blocks, grid_lines, read_data
 
-with open("data/04.in") as handle:
-    lines = handle.read().split()
-    grid: Grid = [list(line) for line in lines]
+data = read_data(day=4)
+lines = data.split()
+grid: Grid = [list(line) for line in lines]
 
 
 part1 = 0
@@ -15,7 +15,18 @@ for line in grid_lines(grid):
 print(part1)
 
 
-def is_mas_cross(block: Grid):
+def is_mas_cross(block: Grid) -> bool:
+    """Check if a block (a 3x3 grid) is a X of 'MAS', i.e. it looks like this:
+
+    M.M
+    .A.
+    S.S
+
+    Where '.' can be any character.
+
+    Note that we don't check for rotated versions because grid_blocks already does this.
+    Also note that we don't check for mirrored versions because they equal the original.
+    """
     return (
         block[0][0] == "M"
         and block[0][2] == "M"

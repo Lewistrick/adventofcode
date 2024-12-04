@@ -1,7 +1,8 @@
 import re
 
-with open("data/03.in") as f:
-    data = f.read()
+from aoc_tools import read_data
+
+data = read_data(day=3)
 
 all_re = re.compile("mul\\(\\d{1,3},\\d{1,3}\\)|do\\(\\)|don't\\(\\)")
 go = True

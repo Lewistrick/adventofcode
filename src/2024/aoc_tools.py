@@ -1,6 +1,15 @@
+import datetime
 from typing import Any, Iterable
 
 Grid = list[list[Any]]
+
+YEAR = 2024
+DAY = datetime.datetime.now().day
+
+
+def read_data(year: int = YEAR, day: int = DAY) -> str:
+    with open(f"data/{year}/{day:02d}.in") as handle:
+        return handle.read()
 
 
 def rotate_grid_ccw(grid: Grid) -> Grid:
@@ -72,7 +81,7 @@ def grid_lines(grid: Grid) -> Iterable[Any]:
             yield (line)
 
 
-def grid_blocks(grid: Grid, width: int, height: int) -> Iterable[Grid]:
+def grid_blocks(grid: Grid, width: int, height: int, rotate=True) -> Iterable[Grid]:
     """Get all sub-blocks of a grid. Returns mini-grids.
 
     Example grid:
@@ -91,4 +100,7 @@ def grid_blocks(grid: Grid, width: int, height: int) -> Iterable[Grid]:
                 for y in range(y0, y0 + height):
                     block.append(grid[y][x0 : x0 + width])
                 yield block
-        grid = rotate_grid_ccw(grid)
+        if rotate:
+            grid = rotate_grid_ccw(grid)
+        else:
+            return
