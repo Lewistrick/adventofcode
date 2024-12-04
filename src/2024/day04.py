@@ -1,11 +1,5 @@
-from typing import Literal
 
-from aoc_tools import grid_blocks, grid_lines
-
-Char = Literal["X", "M", "A", "S"] | str
-Row = list[Char]
-Grid = list[Row]
-
+from aoc_tools import Grid, grid_blocks, grid_lines
 
 with open("data/04.in") as handle:
     lines = handle.read().split()
