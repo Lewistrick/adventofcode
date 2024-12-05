@@ -5,7 +5,7 @@ pairlines, updatelines = lines.split("\n\n")
 pairs = {tuple(map(int, p.split("|"))) for p in pairlines.split()}
 
 
-def checkline_p1(line):
+def checkline_p1(line: str) -> int:
     update = tuple(map(int, line.split(",")))
     for i, n1 in enumerate(update[:-1]):
         for n2 in update[i + 1 :]:
@@ -15,7 +15,7 @@ def checkline_p1(line):
     return update[len(update) // 2]
 
 
-def find_first_page(pages: list[int]):
+def find_first_page(pages: list[int]) -> int:
     if len(pages) == 1:
         return pages[0]
 
@@ -27,7 +27,7 @@ def find_first_page(pages: list[int]):
     return first
 
 
-def sort_p2(line):
+def sort_p2(line: str):
     update = list(map(int, line.split(",")))
 
     correct = []
