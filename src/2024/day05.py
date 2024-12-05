@@ -6,6 +6,11 @@ pairs = {tuple(map(int, p.split("|"))) for p in pairlines.split()}
 
 
 def checkline_p1(line: str) -> int:
+    """Check if the update pages are in the correct order.
+
+    If so, returns the middle page number.
+    If not, returns 0.
+    """
     update = tuple(map(int, line.split(",")))
     for i, n1 in enumerate(update[:-1]):
         for n2 in update[i + 1 :]:
@@ -16,6 +21,7 @@ def checkline_p1(line: str) -> int:
 
 
 def find_first_page_index(pages: list[int]) -> int:
+    """Find the index of the first page in a list of pages."""
     if len(pages) == 1:
         return 0
 
@@ -30,6 +36,10 @@ def find_first_page_index(pages: list[int]) -> int:
 
 
 def sort_p2(line: str):
+    """Sort an update line (list of comma-separated strings).
+
+    Returns the middle page.
+    """
     update = list(map(int, line.split(",")))
 
     correct = []
