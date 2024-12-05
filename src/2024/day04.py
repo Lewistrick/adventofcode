@@ -1,4 +1,3 @@
-
 from aoc_tools import Grid, grid_blocks, grid_lines, read_data
 
 data = read_data(day=4)
