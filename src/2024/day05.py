@@ -15,16 +15,18 @@ def checkline_p1(line: str) -> int:
     return update[len(update) // 2]
 
 
-def find_first_page(pages: list[int]) -> int:
+def find_first_page_index(pages: list[int]) -> int:
     if len(pages) == 1:
-        return pages[0]
+        return 0
 
     first = pages[0]
-    for p in pages[1:]:
+    first_idx = 0
+    for idx, p in enumerate(pages[1:], 1):
         if (p, first) in pairs:
             first = p
+            first_idx = idx
 
-    return first
+    return first_idx
 
 
 def sort_p2(line: str):
@@ -32,8 +34,8 @@ def sort_p2(line: str):
 
     correct = []
     while update:
-        first = find_first_page(update)
-        correct.append(update.pop(update.index(first)))
+        idx = find_first_page_index(update)
+        correct.append(update.pop(idx))
 
     return correct[len(correct) // 2]
 
