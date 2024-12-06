@@ -56,14 +56,13 @@ p1, _, seen = part1(occupied)
 print(p1)
 
 p2 = 0
-for y in range(len(lines)):
-    for x in range(len(lines[0])):
-        if (x, y) in occupied:
-            continue
+for x, y in seen:
+    if (x, y) in occupied or (x, y) == (startx, starty):
+        continue
 
-        occ2 = deepcopy(occupied)
-        occ2.add((x, y))
-        _, is_loop, _ = part1(occ2)
-        p2 += is_loop
+    occ2 = deepcopy(occupied)
+    occ2.add((x, y))
+    _, is_loop, _ = part1(occ2)
+    p2 += is_loop
 
 print(p2)
