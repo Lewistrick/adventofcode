@@ -7,8 +7,8 @@ YEAR = 2024
 DAY = datetime.datetime.now().day
 
 
-def read_data(year: int = YEAR, day: int = DAY) -> str:
-    with open(f"data/{year}/{day:02d}.in") as handle:
+def read_data(year: int = YEAR, day: int = DAY, suffix="in") -> str:
+    with open(f"data/{year}/{day:02d}.{suffix}") as handle:
         return handle.read()
 
 
