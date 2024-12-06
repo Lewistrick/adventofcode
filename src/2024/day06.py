@@ -21,16 +21,16 @@ def part1(occupied):
     currx, curry = startx, starty
     diridx = 0
 
-    seen = set()  # x, y, diridx
+    visited = set()  # x, y, diridx
     is_loop = False
 
     while True:
-        seen.add((currx, curry, diridx))
+        visited.add((currx, curry, diridx))
 
         dx, dy = directions[diridx]
         newx, newy = currx + dx, curry + dy
 
-        if (newx, newy, diridx) in seen:
+        if (newx, newy, diridx) in visited:
             is_loop = True
             break
 
@@ -46,10 +46,10 @@ def part1(occupied):
 
         currx, curry = newx, newy
 
-    unique = {(x, y) for (x, y, _) in seen}
+    seen = {(x, y) for (x, y, _) in visited}
 
-    part1 = len(unique)
-    return part1, is_loop, unique
+    part1 = len(seen)
+    return part1, is_loop, seen
 
 
 p1, _, seen = part1(occupied)
