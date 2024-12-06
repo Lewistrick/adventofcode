@@ -48,21 +48,21 @@ def part1(occupied):
 
     seen = {(x, y) for (x, y, _) in visited}
 
-    part1 = len(seen)
-    return part1, is_loop, seen
+    return seen, is_loop
 
 
-p1, _, seen = part1(occupied)
+seen, _ = part1(occupied)
+p1 = len(seen)
 print(p1)
 
 p2 = 0
-for x, y in seen:
-    if (x, y) in occupied or (x, y) == (startx, starty):
+for x, y in seen - occupied:
+    if (x, y) == (startx, starty):
         continue
 
     occ2 = deepcopy(occupied)
     occ2.add((x, y))
-    _, is_loop, _ = part1(occ2)
+    _, is_loop = part1(occ2)
     p2 += is_loop
 
 print(p2)
