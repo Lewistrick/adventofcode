@@ -6,19 +6,12 @@ from tqdm import tqdm
 
 data = read_data(day=7, suffix="in").split("\n")
 
-all_ops = ("+", "*")
-
-
 @cache
 def concat_values(a, b):
     return int(f"{a}{b}")
 
 
-def part1(index, values, concat=False):
-    poss_ops = all_ops
-    if concat:
-        poss_ops = ("||", "*", "+")
-
+def part1(index, values, poss_ops: tuple[str, ...] = ("+", "*")):
     n_ops = len(values) - 1
     for ops in product(poss_ops, repeat=n_ops):
         val = values[0]
@@ -49,12 +42,12 @@ for line in tqdm(data, "calculating", ascii=".#"):
     if part1(index, values):
         p1 += index
         p2 += index
-    elif part1(index, values, concat=True):
+    elif part1(index, values, poss_ops=("||", "+", "*")):
         p2 += index
 
 # 38798369315 too low
-# 932137732557
+# 932137732557 correct
 print(p1)
 
-
+# 661823605105500 correct
 print(p2)
