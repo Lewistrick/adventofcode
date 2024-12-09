@@ -50,22 +50,60 @@ while cursor < len(memory):
 
 # show_mem(memory)
 
-part1 = sum(i * v for i, v in enumerate(memory))
+part1 = sum(i * v for i, v in enumerate(memory) if v)
 print(part1)
 
 # find blocks of data and free spaces
-data_blocks = {}  # {value: (start, length)}
-free_spaces = []  # [(start, length)]
-curridx = 0
-curr_fileidx = 0
+data_blocks: dict[int, tuple[int, int]] = {}  # {value: (start, length)}
+free_spaces: list[tuple[int, int]] = []  # [(start, length)]
+curr_fileno = 0
+curr_memidx = 0
 for idx, val in enumerate(data):
-    if idx % 0 == 0:
-        data_blocks[curr_fileidx] = (curridx, int(val))
-        curr_fileidx += 1
+    n = int(val)
+    if n == 0:
+        # zero spaces, don't process this
+        continue
+    elif idx % 2 == 0:
+        # this is a data block
+        data_blocks[curr_fileno] = (curr_memidx, n)
+        curr_fileno += 1
     else:
-        free_spaces.append((curridx, int(val)))
+        # this is a free space block
+        free_spaces.append((curr_memidx, n))
 
-for start, length in enumerate(data_blocks[::-1]):
-    for idx, size in enumerate(free_spaces):
-        if length <= size:
-            # move the data block to the free space
+    curr_memidx += n
+
+
+rev_values: list[int] = sorted(data_blocks.keys(), reverse=True)
+for data_value in rev_values:
+    start, length = data_blocks[data_value]
+
+    try:
+        # find all free spaces that this data block fits in;
+        # make sure it's to the left of the data;
+        # then find the space with the lowest idx
+        first_space_idx = min(
+            (
+                ii
+                for ii, (idx, size) in enumerate(free_spaces)
+                if length <= size and idx < start
+            ),  # finds all free spaces with enoug space to the left
+            key=lambda ii: free_spaces[ii][0],
+        )
+    except ValueError:
+        # print(f"{data_value} can't be moved left")        # this data block doesn't fit anywhere
+        continue
+
+    new_start, space_size = free_spaces.pop(first_space_idx)
+    # print(f"Moving {data_value} to index {new_start}")
+
+    data_blocks[data_value] = (new_start, length)
+    if space_size - length:
+        free_spaces.append((new_start + length, space_size - length))
+
+part2 = 0
+for data_value, (start, length) in data_blocks.items():
+    for i in range(start, start + length):
+        part2 += data_value * i
+
+print(part2)
