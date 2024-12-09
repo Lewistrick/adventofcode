@@ -18,23 +18,23 @@ fileidx = 0  # index number of the file
 memory: list[int | None] = []
 part1 = 0
 is_file = True
-for idx, value in enumerate(data):
+for idx, block_size in enumerate(data):
     if idx % 2 == 0:
         # it's a file, start adding memory
-        for _ in range(int(value)):
+        for _ in range(int(block_size)):
             memory.append(fileidx)
         fileidx += 1
     else:
         # it's a free space
-        for _ in range(int(value)):
+        for _ in range(int(block_size)):
             memory.append(None)
 
 # show_mem(memory)
 
 cursor = 0
 while cursor < len(memory):
-    value = memory[cursor]
-    if value is None:
+    mem_value = memory[cursor]
+    if mem_value is None:
         # grab the value from the back
         while True:
             last = memory.pop()
