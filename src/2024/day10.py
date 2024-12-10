@@ -34,7 +34,7 @@ def get_score(x, y, use_seen=True):
 p1 = p2 = 0
 for start in starts:
     p1 += get_score(*start)
-    p2 += get_score(*start, False)
+    p2 += get_score(*start, use_seen=False)
 
 print(p1)
 print(p2)
