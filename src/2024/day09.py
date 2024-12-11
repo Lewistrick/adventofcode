@@ -10,8 +10,7 @@ def show_mem(memory):
     print()
 
 
-data = read_data().strip()
-# data = read_data(suffix="ex").strip()
+data = read_data(day=9).strip()
 
 cursor = 0  # position on the input string
 fileidx = 0  # index number of the file

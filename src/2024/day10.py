@@ -1,6 +1,6 @@
 from aoc_tools import NESW, read_data
 
-data = read_data(suffix="in").split("\n")
+data = read_data(day=10, suffix="in").split("\n")
 vals = {}
 starts = []
 for y, col in enumerate(data):
