@@ -6,7 +6,7 @@ Grid = list[list[Any]]
 YEAR = 2024
 DAY = datetime.datetime.now().day
 
-NESW = {(0, -1), (1, 0), (0, 1), (-1, 0)}
+NESW = [(0, -1), (1, 0), (0, 1), (-1, 0)]
 
 
 def read_data(year: int = YEAR, day: int = DAY, suffix="in") -> str:
