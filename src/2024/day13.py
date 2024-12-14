@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from aoc_tools import nums, read_data
 
-data = read_data(suffix="in")
+data = read_data(day=13, suffix="in")
 
 puzzles = data.split("\n\n")
 
@@ -24,47 +24,57 @@ class Puzzle:
         x, y = nums(p)
         return cls(ax, ay, bx, by, x, y)
 
-    def solve_hard(self) -> tuple[int, int]:
-        
-
-    def solve_easy(self, part2=False):
+    def solve(self, part2=False) -> tuple[int, int]:
         if part2:
             self.x += 10000000000000
             self.y += 10000000000000
 
-        max_a_presses = min((self.x // self.ax), (self.y // self.ay))
+        # draw a line from (0, 0) with slope (ay/ax)
+        a_slope = self.ay / self.ax
 
-        # start with a=0 (pressing a costs more)
-        for a_presses in range(max_a_presses + 1):
-            xa = a_presses * self.ax
+        # draw a line with slope (by/bx) that crosses (x, y)
+        b_slope = self.by / self.bx
+        # solve for c: y = (by/bx)x + c
+        # c = y - (by/bx) * x
+        c = self.y - b_slope * self.x
 
-            b_presses, rest = divmod(self.x - xa, self.bx)
-            if rest:
-                continue
+        # now if the line for a and the line for b cross each other
+        # between 0 and self.x for x values, this is solvable
 
-            ya = a_presses * self.ay
-            yb = b_presses * self.by
+        # note that below, x is the formula x, not the puzzle x
+        # y1 = sa * x
+        # y2 = sb * x + c
+        # sa * x = sb * x + c
+        # (sa - sb) * x = c
+        # x = c / (sa - sb)
+        solx = c / (a_slope - b_slope)
+        if not 0 <= solx <= self.x:
+            # print(f"Not possible hard: X={self.x}, Y={self.y}")
+            return 0, 0
 
-            if part2 and a_presses > 100 or b_presses > 100:
-                continue
+        a_presses = solx / self.ax
+        b_presses = (self.x - solx) / self.bx
 
-            if ya + yb == self.y:
-                print(f"{a_presses=} {b_presses=}")
-                return a_presses, b_presses
+        if abs(round(a_presses) - a_presses) > 0.01:
+            # print(f"Not possible hard: X={self.x}, Y={self.y}")
+            return 0, 0
+        if abs(round(b_presses) - b_presses) > 0.01:
+            return 0, 0
 
-        print(f"Not possible: X={self.x}, Y={self.y}")
-        return 0, 0
+        return (round(a_presses), round(b_presses))
 
 
 p1 = 0
 p2 = 0
 for lines in puzzles:
     puzzle = Puzzle.from_lines(lines)
-    a_presses, b_presses = puzzle.solve_easy()
+
+    a_presses, b_presses = puzzle.solve()
     p1 += 3 * a_presses + b_presses
 
-    a_presses, b_presses = puzzle.solve_easy(True)
+    a_presses, b_presses = puzzle.solve(True)
     p2 += 3 * a_presses + b_presses
+
 
 print(p1)  # 25754 too low
 print(p2)
