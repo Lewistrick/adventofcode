@@ -32,32 +32,34 @@ class Puzzle:
         # draw a line from (0, 0) with slope (ay/ax)
         a_slope = self.ay / self.ax
 
-        # draw a line with slope (by/bx) that crosses (x, y)
+        # draw a line with slope (by/bx) that crosses (X, Y)
         b_slope = self.by / self.bx
         # solve for c: y = (by/bx)x + c
         # c = y - (by/bx) * x
         c = self.y - b_slope * self.x
 
         # now if the line for a and the line for b cross each other
-        # between 0 and self.x for x values, this is solvable
+        # between x=0 and x=self.x, this is solvable
 
-        # note that below, x is the formula x, not the puzzle x
+        # note that below, x is used to make the formula,
+        # which is different from the X in the puzzle (self.x)
+
         # y1 = sa * x
         # y2 = sb * x + c
-        # sa * x = sb * x + c
+        # y1=y2, so: sa * x = sb * x + c
         # (sa - sb) * x = c
         # x = c / (sa - sb)
         solx = c / (a_slope - b_slope)
         if not 0 <= solx <= self.x:
-            # print(f"Not possible hard: X={self.x}, Y={self.y}")
             return 0, 0
 
         a_presses = solx / self.ax
         b_presses = (self.x - solx) / self.bx
 
+        # number of presses has to be an integer number
         if abs(round(a_presses) - a_presses) > 0.01:
-            # print(f"Not possible hard: X={self.x}, Y={self.y}")
             return 0, 0
+
         if abs(round(b_presses) - b_presses) > 0.01:
             return 0, 0
 
@@ -76,5 +78,5 @@ for lines in puzzles:
     p2 += 3 * a_presses + b_presses
 
 
-print(p1)  # 25754 too low
+print(p1)
 print(p2)
