@@ -1,4 +1,6 @@
 import datetime
+import re
+from functools import reduce
 from typing import Any, Iterable
 
 Grid = list[list[Any]]
@@ -106,3 +108,10 @@ def grid_blocks(grid: Grid, width: int, height: int, rotate=True) -> Iterable[Gr
             grid = rotate_grid_ccw(grid)
         else:
             return
+
+def nums(s):
+    return map(int, re.findall("-?\\d+", s))
+
+
+def product(ns):
+    return reduce(lambda a, b: a * b, ns, 1)
