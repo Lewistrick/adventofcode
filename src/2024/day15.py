@@ -160,13 +160,13 @@ for movech in moves:
         if doshow:
             print("Empty space found, moving")
             show_new(rx, ry)
-
         continue
 
     # it's a box
     can_move = True
     move_boxes = set()
     bx, by = (nx, ny) if (nx, ny) in boxes else (nx - 1, ny)
+    assert (bx, by) in boxes
     move_boxes.add((bx, by))
     if dy == 0:
         # horizontal movement (easy)
@@ -174,7 +174,7 @@ for movech in moves:
             tx, ty = (bx + dx * step, by)
             if (tx, ty) in boxes:
                 move_boxes.add((tx, ty))
-            elif (tx - 1, ty) in boxes:
+            elif (tx + dx, ty) in boxes:
                 move_boxes.add((tx, ty))
             elif (tx, ty) in walls:
                 can_move = False
@@ -186,10 +186,9 @@ for movech in moves:
             for bx, by in move_boxes:
                 boxes.remove((bx, by))
                 boxes.add((bx + dx, by))
-                empty.add((rx, ry))
+                empty.add((bx, by))
             # move the robot
             rx, ry = nx, ny
-        show_new(rx, ry)
     else:
         # vertical movement
         stack = [(bx, by)]
