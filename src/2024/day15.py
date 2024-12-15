@@ -167,11 +167,14 @@ for movech in moves:
     can_move = True
     move_boxes = set()
     bx, by = (nx, ny) if (nx, ny) in boxes else (nx - 1, ny)
+    move_boxes.add((bx, by))
     if dy == 0:
         # horizontal movement (easy)
-        for step in count(1):
+        for step in count():
             tx, ty = (bx + dx * step, by)
             if (tx, ty) in boxes:
+                move_boxes.add((tx, ty))
+            elif (tx - 1, ty) in boxes:
                 move_boxes.add((tx, ty))
             elif (tx, ty) in walls:
                 can_move = False
@@ -186,6 +189,7 @@ for movech in moves:
                 empty.add((rx, ry))
             # move the robot
             rx, ry = nx, ny
+        show_new(rx, ry)
     else:
         # vertical movement
         stack = [(bx, by)]
