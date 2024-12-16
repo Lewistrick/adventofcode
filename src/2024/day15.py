@@ -64,7 +64,16 @@ def show_new(rx, ry, override=False):
                 print("O", end="")
             else:
                 print(".", end="")
-        print()
+
+        xboxes = sorted(bx for bx, by in boxes if by == y)
+        boxstr = ",".join(map(str, xboxes))
+        empties = sorted(bx for bx, by in empty if by == y)
+        empstr = ",".join(map(str, empties))
+        if set(xboxes) & set(empties):
+            wrn = "!"
+        else:
+            wrn = ""
+        print(f" {wrn}{boxstr} | {empstr}")
 
 
 for movech in moves:
@@ -137,16 +146,17 @@ for y, row in enumerate(grid):
             boxes.add((x, y))
         if val == "@":
             rx, ry = x, y
+            empty.add((x, y))
 
 doshow = True
 show_new(rx, ry)
-for movech in moves:
+for movei, movech in enumerate(moves):
     if not movech.split():
         continue
     dx, dy = dirs[movech]
 
     if doshow:
-        input(f"Next move: {movech} >> ")
+        input(f"Move {movei}: {movech} >> ")
 
     nx, ny = rx + dx, ry + dy
     if (nx, ny) in walls:
@@ -183,25 +193,33 @@ for movech in moves:
                 can_move = True
                 break
         if can_move:
+            empty.remove((tx, ty))
+            empty.add((nx, ny))
             for bx, by in move_boxes:
                 boxes.remove((bx, by))
                 boxes.add((bx + dx, by))
-                empty.add((bx, by))
             # move the robot
             rx, ry = nx, ny
     else:
         # vertical movement
         stack = [(bx, by)]
+        move_boxes = {(bx, by)}
         while stack:
             tx, ty = stack.pop(0)
+            print(f"Checking box at ({tx},{ty})")
+            assert (tx, ty) in boxes or (tx - 1, ty) in boxes
 
             # if it's blocked by a wall, stop checking
-            if (tx, ty + dy) in walls or (tx + 1, ty + dy) in walls:
+            if (tx, ty + dy) in walls or (tx - 1, ty + dy) in walls:
                 can_move = False
                 break
 
-            # if both are empty, keep checking
-            if (tx, ty + dy) in empty and (tx + 1, ty + dy) in empty:
+            # add this box to the boxes to move
+            # (if we encounter a wall, this set will be ignored)
+            move_boxes.add((tx, ty))
+
+            # if both are empty, this box can move; check the others
+            if (tx, ty + dy) in empty and (tx - 1, ty + dy) in empty:
                 continue
 
             # oh no, there's a box; add it to the stack
@@ -220,10 +238,10 @@ for movech in moves:
             for bx, by in move_boxes:
                 # left side: (bx, by)
                 if (bx, by) not in boxes and (bx - 1, by) not in boxes:
-                    empty.add(bx, by)
+                    empty.add((bx, by))
                 # right side: (bx+1, by)
                 if (bx + 1, by) not in boxes and (bx, by) not in boxes:
-                    empty.add(bx - 1, by)
+                    empty.add((bx - 1, by))
             # move the robot
             rx, ry = nx, ny
 
