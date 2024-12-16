@@ -1,10 +1,12 @@
-from typing import Any, Generator
+import time
+from heapq import heappop, heappush
+from typing import Generator
 
 from aoc_tools import NESW, read_data
 
 Pos = tuple[int, int]
 
-data = read_data(suffix="ex").split("\n")
+data = read_data(suffix="in").split("\n")
 
 tiles = set()
 for y, row in enumerate(data):
@@ -23,67 +25,81 @@ part1 = 0
 
 
 def get_solutions(
-    score: int, cx: int, cy: int, dx: int, dy: int, seen: set[Pos]
-) -> Generator[tuple[set[Pos], int], Any, None]:
-    global part1
+    sx: int, sy: int, ex: int, ey: int, tiles: set[Pos]
+) -> Generator[tuple[set[Pos], int], None, None]:
+    queue = [(0, sx, sy, 0, 0, {(sx, sy)})]  # (cx, cy, score, dx, dy, seen)
+    shortest_score = float("inf")
+    shortest_to = {}  # {(cx, cy, dx, dy): dist}
 
-    if part1 and score > part1:
-        # print(f"Returning with too high score {score}")
-        return
+    next_print = time.perf_counter()
+    while queue:
+        score, cx, cy, dx, dy, seen = heappop(queue)
 
-    # if (cx, cy) == (9, 7):
-    #     breakpoint()
+        if time.perf_counter() > next_print:
+            next_print += 5
+            print(f"{next_print:.0f} {len(queue)=} {score=}")
 
-    if (cx, cy) == (ex, ey):
-        part1 = score
-        yield (seen, score)
-
-    # turns
-    for ndx, ndy in NESW:
-        if abs(ndx) == abs(dx) and abs(ndy == abs(dy)):
-            # don't go straight or reverse
+        if score > shortest_score:
             continue
 
-        if (newpos := (cx + ndx, cy + ndy)) not in tiles:
-            # don't go through walls
+        if (olddist := shortest_to.get((cx, cy, dx, dy))) and olddist < score:
+            continue
+        shortest_to[(cx, cy, dx, dy)] = olddist
+
+        # Reached the end position
+        if (cx, cy) == (ex, ey):
+            shortest_score = score
+            print(f"Found new solution with score {score}")
+            yield seen, score
             continue
 
-        if newpos in seen:
-            # don't revisit
-            continue
+        # Go straight
+        newpos = (cx + dx, cy + dy)
+        if newpos in tiles and newpos not in seen:
+            if (olddist := shortest_to.get((*newpos, dx, dy))) and olddist < score + 1:
+                continue
+            heappush(queue, (score + 1, newpos[0], newpos[1], dx, dy, seen | {newpos}))
 
-        newseen = seen | {newpos}
-        yield from get_solutions(score + 1001, *newpos, ndx, ndy, newseen)
+        # Explore all valid moves
+        for ndx, ndy in NESW:
+            # Avoid straight or reverse movement
+            if abs(ndx) == abs(dx) and abs(ndy) == abs(dy):
+                continue
+            newpos = (cx + ndx, cy + ndy)
 
-    # straight
-    if (newpos := (cx + dx, cy + dy)) in tiles:
-        if newpos not in seen:
-            newseen = seen | {newpos}
-            yield from get_solutions(score + 1, *newpos, dx, dy, newseen)
+            if (
+                olddist := shortest_to.get((*newpos, ndx, ndy))
+            ) and olddist < score + 1001:
+                continue
 
+            if newpos in tiles and newpos not in seen:
+                heappush(
+                    queue,
+                    (
+                        score + 1001,
+                        *newpos,
+                        ndx,
+                        ndy,
+                        seen | {newpos},
+                    ),
+                )
+
+
+sols = []
+shortest = 999_999_999
+for sol, score in get_solutions(sx, sy, ex, ey, tiles):
+    sols.append((sol, score))
+    shortest = min(score, shortest)
+
+part1 = shortest
+
+sols2 = [sol for sol, score in sols if score == shortest]
 
 allseen = set()
-for sol, score in get_solutions(0, sx, sy, 1, 0, {sx, sy}):
-    allseen |= sol
+for sol, score in sols:
+    if score == shortest:
+        allseen |= sol
 
-    # print()
-    # print("   ", end="")
-    # for x in range(len(data[0])):
-    #     print(x % 10, end="")
-    # print()
-
-    # for y in range(len(data)):
-    #     print(f"{y:2d}", end=" ")
-    #     for x in range(len(data[0])):
-    #         if (x, y) in sol:
-    #             print("O", end="")
-    #         elif (x, y) in tiles:
-    #             print(".", end="")
-    #         else:
-    #             print("#", end="")
-    #     print()
-
-    # print(score)
-
-print(score)
-print(len(allseen) - 1)
+part2 = len(allseen)
+print()
+print(part1, part2)
