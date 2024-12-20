@@ -62,7 +62,39 @@ def solve(tiles, walls, sx, sy, ex, ey, cheats_left):
 
 
 """
-1. calculate shortest route from every tile
+1. calculate shortest route from every tile in ps
 2. for every point, try to create all cheats
-3. 
+3. count the number cheats that save more than 100ps
 """
+
+Pos = tuple[int, int]
+shortest_from: dict[Pos, int] = {(ex, ey): 0}
+stack = [(ex, ey, 0)]
+while stack:
+    cx, cy, d = stack.pop()
+    for dx, dy in NESW:
+        newpos = cx + dx, cy + dy
+        if newpos not in tiles:
+            continue
+
+        if newpos not in shortest_from:
+            shortest_from[newpos] = d + 1
+            stack.append((*newpos, d + 1))
+            continue
+
+        if ((olddist := shortest_from.get(newpos)) is None) or (olddist >= d + 1):
+            if newpos == (ex, ey):
+                breakpoint()
+            shortest_from[newpos] = d + 1
+            stack.append((*newpos, d + 1))
+
+print(shortest_from[(sx, sy)])
+
+for y in range(len(data)):
+    for x in range(len(data[0])):
+        d = shortest_from.get((x, y))
+        if d is not None:
+            print(f"{d:03d}", end=" ")
+        else:
+            print(" . ", end=" ")
+    print()
