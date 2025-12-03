@@ -1,7 +1,7 @@
 [project]
 name = "adventofcode"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.2.0"
+description = "Solutions for Advent of Code"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -10,4 +10,10 @@ dependencies = [
 ]
 
 [project.scripts]
-today = "src.main:run_day"
+today = "main:run_day"
+
+[tool.uv]
+package = true
+
+[tool.uv.build-backend]
+module-name = "src"

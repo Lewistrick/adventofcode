@@ -110,6 +110,7 @@ def grid_blocks(grid: Grid, width: int, height: int, rotate=True) -> Iterable[Gr
         else:
             return
 
+
 def nums(s):
     return map(int, re.findall("-?\\d+", s))
 
