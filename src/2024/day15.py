@@ -156,7 +156,8 @@ for movei, movech in enumerate(moves):
     dx, dy = dirs[movech]
 
     if doshow:
-        input(f"Move {movei}: {movech} >> ")
+        print(f"Move {movei}: {movech}")
+        # input(" >> ")
 
     nx, ny = rx + dx, ry + dy
     if (nx, ny) in walls:
@@ -184,24 +185,29 @@ for movei, movech in enumerate(moves):
             tx, ty = (bx + dx * step, by)
             if (tx, ty) in boxes:
                 move_boxes.add((tx, ty))
-            elif (tx + dx, ty) in boxes:
-                move_boxes.add((tx, ty))
             elif (tx, ty) in walls:
                 can_move = False
                 break
             elif (tx, ty) in empty:
                 can_move = True
                 break
+            else:
+                assert (tx - dx, ty) in boxes
+
         if can_move:
             empty.remove((tx, ty))
             empty.add((nx, ny))
             for bx, by in move_boxes:
-                boxes.remove((bx, by))
+                try:
+                    boxes.remove((bx, by))
+                except KeyError:
+                    breakpoint()
                 boxes.add((bx + dx, by))
             # move the robot
             rx, ry = nx, ny
     else:
         # vertical movement
+        # (note: move 254 on 15.ex2 doesn't work correctly yet)
         stack = [(bx, by)]
         move_boxes = {(bx, by)}
         while stack:
@@ -219,7 +225,7 @@ for movei, movech in enumerate(moves):
             move_boxes.add((tx, ty))
 
             # if both are empty, this box can move; check the others
-            if (tx, ty + dy) in empty and (tx - 1, ty + dy) in empty:
+            if (tx, ty + dy) in empty and (tx + 1, ty + dy) in empty:
                 continue
 
             # oh no, there's a box; add it to the stack
@@ -227,21 +233,29 @@ for movei, movech in enumerate(moves):
                 stack.append((tx, ty + dy))
             else:
                 stack.append((tx + 1, ty + dy))
-                assert ((tx + 1, ty + dy)) in boxes
+                if ((tx + 1, ty + dy)) not in boxes:
+                    raise KeyError(f"({tx+1},{ty+dy}) not in boxes")
 
+        print(f"{can_move=} ; {move_boxes=}")
         if can_move:
             # first, move the boxes
             for bx, by in move_boxes:
                 boxes.remove((bx, by))
                 boxes.add((bx, by + dy))
+                for bdx in (0, 1):
+                    if (bx + bdx, by + dy) in empty:
+                        empty.remove((bx + bdx, by + dy))
+
             # then, re-check empty positions (move_boxes now contains old positions)
             for bx, by in move_boxes:
                 # left side: (bx, by)
                 if (bx, by) not in boxes and (bx - 1, by) not in boxes:
+                    print(f"Adding ({bx},{by}) to empty")
                     empty.add((bx, by))
                 # right side: (bx+1, by)
                 if (bx + 1, by) not in boxes and (bx, by) not in boxes:
-                    empty.add((bx - 1, by))
+                    print(f"Adding ({bx+1},{by}) to empty")
+                    empty.add((bx + 1, by))
             # move the robot
             rx, ry = nx, ny
 
