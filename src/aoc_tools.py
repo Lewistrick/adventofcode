@@ -1,4 +1,5 @@
 import datetime
+import itertools
 import re
 from functools import reduce
 from typing import Any, Iterable
@@ -10,6 +11,7 @@ YEAR = TODAY.year
 DAY = TODAY.day
 
 NESW = [(0, -1), (1, 0), (0, 1), (-1, 0)]
+DIR8 = [(x, y) for (x, y) in itertools.product((-1, 0, 1), (-1, 0, 1)) if (x, y) != (0, 0)]
 
 
 def read_data(year: int = YEAR, day: int = DAY, suffix="in") -> str:
