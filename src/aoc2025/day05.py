@@ -10,12 +10,7 @@ def solve():
         rfrom, rto = new_rng.split("-")
         fresh.add(range(int(rfrom), int(rto) + 1))
 
-    part1 = 0
-    for id in available_ids.split("\n"):
-        iid = int(id)
-        if any(iid in rng for rng in fresh):
-            part1 += 1
-
+    part1 = sum(1 for id in available_ids.split("\n") if any(int(id) in rng for rng in fresh))
     logger.success(part1)
 
     new_ranges = []
@@ -37,12 +32,5 @@ def solve():
     # don't forget to add the last range
     new_ranges.append(curr_rng)
 
-    part2 = 0
-    for r in new_ranges:
-        part2 += len(r)
-
+    part2 = sum(len(r) for r in new_ranges)
     logger.success(part2)
-    
-    
-# too low:  350780324308377
-# too high: 350780324308389
