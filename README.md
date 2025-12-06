@@ -9,3 +9,10 @@
 - Daily inputs are in the `data/` folder
     - Puzzle inputs are named `<day>.in` (zero-padded again)
     - Example inputs are named `<day>.ex<n>` (n is an indexing number)
+
+## Run
+- To create a starter script and two empty data files for a day, run `uv run start`.
+- To execute a script for a given day, run `uv run today`.
+- For both of the scripts above, you can specify one or both of these:
+    - `-y 2025` to specify the year (in this case, 2025)
+    - `-d 1` to specify the day (in this case the 1st day of advent)
